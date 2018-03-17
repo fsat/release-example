@@ -28,16 +28,18 @@ scalariformPreferences in ThisBuild := scalariformPreferences.value
     .setPreference(AlignSingleLineCaseStatements, true)
     .setPreference(AllowParamGroupsOnNewlines, true)
 
-enablePlugins(AutomateHeaderPlugin)
+
 
 lazy val `release-example` = project
   .in(file("."))
+  .enablePlugins(AutomateHeaderPlugin)
   .aggregate(
     example
   )
 
 lazy val example = project
   .in(file("example"))
+  .enablePlugins(AutomateHeaderPlugin)
   .settings(Seq(
     libraryDependencies ++= Seq(
       Libraries.akka,
