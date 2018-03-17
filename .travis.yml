@@ -12,6 +12,9 @@ before_cache:
   - rm -rf $HOME/.ivy2/cache/au/id/fsat
   # Delete all ivydata files since ivy touches them on each build
   - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
+branches:
+  only:
+  - master
 script:
   - sbt clean test
 
