@@ -1,3 +1,4 @@
+import _root_.bintray.Bintray
 import scalariform.formatter.preferences._
 
 lazy val Versions = new {
@@ -17,6 +18,12 @@ lazy val Libraries = new {
   val scalaTest       = "org.scalatest"     %% "scalatest"        % Versions.scalaTest   % "test"
 }
 
+lazy val releaseSettings = Seq(
+  bintrayRepository := "universal",
+  bintrayPackage := (name in LocalRootProject).value,
+  publishTo := Some(Resolver.bintrayRepo("fsat", bintrayRepository.value))
+)
+
 scalaVersion in ThisBuild := Versions.scalaVersion
 
 organization in ThisBuild := "au.id.fsat"
@@ -34,10 +41,16 @@ lazy val `release-example` = project
   .aggregate(
     example
   )
+  .settings(releaseSettings)
+  .settings(
+    skip in publish := true,
+    bintrayRelease := ()
+  )
 
 lazy val example = project
   .in(file("example"))
   .enablePlugins(AutomateHeaderPlugin)
+  .settings(releaseSettings)
   .settings(
     libraryDependencies ++= Seq(
       Libraries.akka,
@@ -49,5 +62,18 @@ lazy val example = project
     ),
     mainClass in assembly := Some("au.id.fsat.examples.Main"),
     assemblyJarName in assembly := s"example-${(version in ThisBuild).value}-all.jar",
-    resolvers += Resolver.bintrayRepo("fsat", "examples")
+    publish := {
+      val log = streams.value.log
+
+      val bintrayCredentials = bintrayEnsureCredentials.value
+      val bintrayRepo = Bintray.cachedRepo(bintrayCredentials, bintrayOrganization.value, bintrayRepository.value)
+      val packageName = bintrayPackage.value
+      val fatJar = assembly.value
+
+      log.info(s"Uploading [$packageName/${fatJar.getName}] to [${bintrayCredentials.user}/${bintrayRepository.value}]")
+      bintrayRepo.upload(packageName, version.value, fatJar.getName, fatJar, log)
+
+      log.info(s"Releasing [$packageName/${fatJar.getName}] version [${version.value}]")
+      bintrayRepo.release(packageName, version.value, log)
+    }
   )
