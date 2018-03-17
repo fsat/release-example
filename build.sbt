@@ -28,17 +28,17 @@ scalariformPreferences in ThisBuild := scalariformPreferences.value
     .setPreference(AlignSingleLineCaseStatements, true)
     .setPreference(AllowParamGroupsOnNewlines, true)
 
-enablePlugins(AutomateHeaderPlugin)
-
 lazy val `release-example` = project
   .in(file("."))
+  .enablePlugins(AutomateHeaderPlugin)
   .aggregate(
     example
   )
 
 lazy val example = project
   .in(file("example"))
-  .settings(Seq(
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(
     libraryDependencies ++= Seq(
       Libraries.akka,
       Libraries.akkaStream,
@@ -46,5 +46,8 @@ lazy val example = project
       Libraries.scopt,
       Libraries.scalaTest,
       Libraries.akkaTestKit
-    )
-  ))
+    ),
+    mainClass in assembly := Some("au.id.fsat.examples.Main"),
+    assemblyJarName in assembly := s"example-${(version in ThisBuild).value}-all.jar",
+    resolvers += Resolver.bintrayRepo("fsat", "examples")
+  )
