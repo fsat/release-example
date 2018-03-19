@@ -17,4 +17,4 @@ branches:
   - master
 script:
   - sbt clean test
-
+  - sh release.sh
