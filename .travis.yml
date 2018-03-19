@@ -3,6 +3,9 @@ scala:
   - 2.12.4
 jdk:
   - oraclejdk8
+before_install:
+  - openssl aes-256-cbc -K $encrypted_7dbe1e2dc648_key -iv $encrypted_7dbe1e2dc648_iv -in .travis/travis-gh.enc -out .travis/travis-gh -d
+  - eval "$(ssh-agent -s)" && chmod 0600 .travis/travis-gh && ssh-add .travis/travis-gh && rm .travis/travis-gh
 cache:
   directories:
     - $HOME/.ivy2/cache
@@ -17,4 +20,14 @@ branches:
   - master
 script:
   - sbt clean test
-
+deploy:
+  provider: script
+  script: sh release.sh master
+  on:
+    branch: master
+env:
+  global:
+  # BINTRAY_USER
+  - secure: n6c7zPFVs2T2jQYMkz5kbhxnX+iNaW4G0JB68g9GBX64UbwpuFGIux/54gHlt3yYnODX4B7oMzkyDBcKIFzABgPdD/ZiopBQXPfvljveuYIejXQlKJ9KJnLR4J1FOZf6oaRu8XjwKrAdK1ByRRskkibmMLY2GXxU/stA5M1ELgD/9VAPTKJYMkR28EB2NqPqrng7ZcS6a+CJBcWx3e/7SyGcP3YMlPA80enJWRJBACqFa5LPXeo7Rk4J3fSn2hh1G68b9yXxKA+DIhTXcHeCIgV41R+g3z79Wi5sLEn88ks5DhrsBYnW7y6FgPHUWLsQHRgyOXTAc0r603uFKNWqnE5yadFwhvfSxP+VvUEXCszPm6B7OJ6k/aMGK7vUGvyxYJ9tRwKhggDeSJ68sautGgxqce4Zz9KVGUNwPfL8VgqaWs8a2GhDyyo5MWb9WEAYfJ7hthr/OSWCHxV9AzI1mX0ZmIDb5PVv5xlK+EEB/THxXA4oy1N941/KchJB005bsNHeCgm4hmUNWTNuEvqW6bFEjmpeV3AWjSUr6TesmuBKTFCVBl8zsxeVk2HAcx4jbbqHhpQYnw1kHW3exofD8q9sTC6ocSVu+M1QzwxKX6HG4kUD8mtunpEkXuh5/jtJIDkc4/z3HYjj+BG7UhZliZ8AWRy4SFZC9/VOb0X537Q=
+  # BINTRAY_PASS
+  - secure: f5jgeISR58vxUmhDBD6fqOySlWy9MuUyMLoRPYRmT4f22dfjCZ24C+xyqcXfVnF8sMkijy5y/opVhulFL+iEx33OxSd2MsrTP6do5JzbBEg4jHyCFD+L66FJq303pMyHmuJZ1tuzKaj2uojF9cRg9KO46uNZ04fRceqObCM3x9kE9sV4eTV2EW9SrtG/7OlSYm0qrVSqp7GLZBC9eVTcF2bZJdtedxi0Jq0Lvxmfe4K+wGeFxxxACQJuzcnbv6J3JIo2C1dYlZwaFF67l6wUXFdsLYWm6nWQonVxIstb2b8hh6/GMyoBrU2ohPekLFFdGg0LloSdj/mJQFOU0HQR16GQUSa2Y0oIpZiStayKytA0u3muLvKmfK3qsUuFsTUtdfJFLnslacxuH0HP2ORWO+hcc0rLDmfhye8tdg3iL33MWX+4FAdrZ72i5fSC6BqPpWHUGNwfSyRph1DSYZXMt5QmaSVrAN6SAgEdqfQreJOFGURzF/yAW90hySDfLx8aKdEcyuQzGlp+z6JI6Q38/OO36n1FXVcl7jowgT5zS1PfDybAK8VQgwpmIlGBMDFNJez6yPujx2s3GiLlNe/6cHYqiSxOZpK/Upx7pfKKx86f2VghxBBng4elEAM8y5wqDhqghKNiJm9UEwFrhekeEnlww3V9WFTvpMQ0gbTf7sQ=
