@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Credit goes to https://www.planetholt.com/2017/04/03/automated-releases-using-sbt-release-travis-ci/6196
+# Ideas behind the git deploy keys + separate SSH based remote came from the site above.
+# If using paid Travis, simply add the private key for your deploy key pair into Travis
+
 set -ex
 
 RELEASE_FROM_BRANCH=release-from-travis
