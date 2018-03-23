@@ -44,11 +44,18 @@ echo "Set credentials to user having the deploy key"
 git config user.name "$RELEASE_USER_NAME"
 git config user.email $RELEASE_USER_EMAIL
 
-echo "Reset to release branch"
+echo "Reset to [$RELEASE_FROM_BRANCH] branch"
 git remote add $RELEASE_FROM_REMOTE $GIT_REPO
-git fetch release
+git fetch $RELEASE_FROM_REMOTE
+
+# Cleanup all the remaining artifacts
 git reset --hard
-git checkout -b $RELEASE_FROM_BRANCH $RELEASE_FROM_REMOTE/$RELEASE_FROM_BRANCH
+git clean -dxf
+
+# Swap to release branch and point to release remote
+git checkout $RELEASE_FROM_BRANCH
+git branch --set-upstream-to=$RELEASE_FROM_REMOTE/$RELEASE_FROM_BRANCH
+
 
 echo "Releasing"
 sbt "release with-defaults"
