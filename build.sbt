@@ -47,7 +47,7 @@ lazy val `release-example` = project
     bintrayRelease := ((): Unit),
 
     // Skip CI build when release commit is pushed to prevent recursive build from occurring
-    releaseCommitMessage := "${releaseCommitMessage.value} [ci skip]"
+    releaseCommitMessage := s"${releaseCommitMessage.value} [ci skip]"
   )
 
 lazy val example = project
