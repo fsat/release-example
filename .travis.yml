@@ -25,6 +25,7 @@ deploy:
   script: sh release.sh master
   on:
     branch: master
+  skip_cleanup: true
 env:
   global:
   # BINTRAY_USER
