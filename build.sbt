@@ -51,7 +51,7 @@ lazy val `release-example` = project
 
 lazy val example = project
   .in(file("example"))
-  .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(AutomateHeaderPlugin, BuildInfoPlugin)
   .settings(releaseSettings)
   .settings(
     libraryDependencies ++= Seq(
@@ -62,6 +62,8 @@ lazy val example = project
       Libraries.scalaTest,
       Libraries.akkaTestKit
     ),
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "au.id.fsat.examples",
     mainClass in assembly := Some("au.id.fsat.examples.Main"),
     assemblyJarName in assembly := s"example-${(version in ThisBuild).value}-all.jar",
     publish := {
