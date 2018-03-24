@@ -20,8 +20,7 @@ lazy val Libraries = new {
 
 lazy val releaseSettings = Seq(
   bintrayRepository := "universal",
-  bintrayPackage := (name in LocalRootProject).value,
-  publishTo := Some(Resolver.bintrayRepo("fsat", bintrayRepository.value))
+  bintrayPackage := (name in LocalRootProject).value
 )
 
 scalaVersion in ThisBuild := Versions.scalaVersion
