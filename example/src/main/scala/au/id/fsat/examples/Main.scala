@@ -23,7 +23,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import scopt.OptionParser
 
-import scala.concurrent.Await
+import scala.concurrent.{ Await, ExecutionContext }
 import scala.concurrent.duration._
 import scala.io.StdIn
 
@@ -34,9 +34,13 @@ object Main {
   case class InputArgs(host: Option[String] = None, port: Option[Int] = None)
 
   val parser = new OptionParser[InputArgs]("example") {
-    head("Example app")
+    head(s"Example app ${BuildInfo.version}")
 
-    version("Example app")
+    version("version")
+      .text("Shows the version of the application")
+
+    help("help")
+      .text("Shows help text")
 
     opt[String]("host")
       .text("Specifies the web endpoint bind host")
@@ -47,11 +51,11 @@ object Main {
       .action((v, args) => args.copy(port = Some(v)))
   }
 
-  def startWebServer(host: String, port: Int): Unit = {
-    implicit val system = ActorSystem("my-system")
-    implicit val materializer = ActorMaterializer()
+  private def startWebServer(host: String, port: Int): Unit = {
+    implicit val system: ActorSystem = ActorSystem("my-system")
+    implicit val materializer: ActorMaterializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
-    implicit val executionContext = system.dispatcher
+    implicit val executionContext: ExecutionContext = system.dispatcher
 
     val route = path("") {
       get {
@@ -72,10 +76,14 @@ object Main {
       1.minute)
   }
 
+  private def showHelpText(): Unit = parser.parse(Seq("--help"), InputArgs())
+
   def main(args: Array[String]): Unit = {
     parser.parse(args, InputArgs()) match {
       case Some(InputArgs(Some(host), Some(port))) => startWebServer(host, port)
-      case _                                       => sys.exit(1)
+      case _ =>
+        showHelpText()
+        sys.exit(1)
     }
   }
 }
