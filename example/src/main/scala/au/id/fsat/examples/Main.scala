@@ -59,7 +59,7 @@ object Main {
 
     val route = path("") {
       get {
-        complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "TEST"))
+        complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "TEST\n\n"))
       }
     }
 
